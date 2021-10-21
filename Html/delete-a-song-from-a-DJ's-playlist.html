@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+
+<html lang="en">
+
+
+
+
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+
+<title>DJ Mobile App</title>
+
+<link rel="stylesheet" type="text/css" href="styles/framework.css">
+
+<link rel="stylesheet" type="text/css" href="styles/style.css">
+
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,300i,400,400i,500,500i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="fonts/css/fontawesome-all.min.css">
+
+
+
+<link rel="manifest" href="_manifest.json" data-pwa-version="set_by_pwa.html">
+
+<link rel="shortcut icon" href="img/icons/favicon.png" type="image/x-icon">
+
+<link rel="apple-touch-icon" href="img/icons/favicon.png">
+
+<style type="text/css">
+
+/* CSS rules are kept repetitive so that you can get CSS rules for each button easily :) */
+
+
+
+</style>
+
+</head>
+
+<body class="theme-light" data-highlight="blue2">
+
+<div id="page">
+
+
+
+<div class="header header-fixed header-logo-app">
+
+<a href="page-menu.html" class="back-button header-title">Back to pages</a>
+
+<a href="page-menu.html" class="header-icon header-icon-1 back-button"><i class="fas fa-arrow-left"></i></a>
+
+<a href="#" class="header-icon header-icon-2" data-toggle-theme><i class="fa fa-moon"></i></a>
+
+</div>
+
+<div class="footer-menu footer-5-icons footer-menu-center-icon">
+
+<a href="contact-us.html"><i class="fa fa-envelope"></i><span>Contact</span></a>
+
+<a href="notification.html"><i class="fa fa-star"></i><span>Notification</span></a>
+
+<a href="index.html"><i class="fa fa-home"></i><span>Home</span></a>
+
+<a href="gallery.html"><i class="fa fa-camera"></i><span>Media</span></a>
+
+<a href="page-menu.html"  class="active-nav"><i class="fa fa-bars"></i><span>Menu</span></a>
+
+
+
+<div class="clear"></div>
+
+</div>
+
+
+
+
+
+
+
+<div class="page-content header-clear-large">
+
+<div class="content"  >
+
+<h4 class="text-primary">delete a song from a DJ's playlist </h4>
+
+
+
+<div class="form-shadow">
+
+<form class="searchform cf" method="POST">
+
+  <input type="number" min="1" name="id" id="id" placeholder="Enter your song id" required>
+
+  <button type="button" id="FindSong" >Find</button>
+
+</form>
+
+
+
+<div class="clearfixed"></div>
+
+
+
+</div>
+
+
+
+<div id="SongList"></div>
+
+
+
+ 
+
+<div class="clearfixed"></div>
+
+<hr/>
+
+
+
+</div>
+
+<div class="clearfixed"></div>
+
+<div class="clearfixed"></div>
+
+</div>
+
+<div class="menu-hider"></div>
+
+</div>
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		$('#button-1').on('click', function(){
+
+			$('#btn-1').slideToggle();
+
+		});
+
+
+
+			 var base_url = 'http://songblendr.com/web_service/api/';
+
+
+
+		$('#FindSong').click(function(){
+
+			var id = $('input[name=id]').val();
+
+			if(id ==''){
+
+				alert('Song id is empty');
+
+				return false;
+
+			}
+
+
+
+			$.ajax({
+
+				url:base_url+'song/read_single.php?id='+id,
+
+				type:'GET',
+
+				cache:false,
+
+				success:function(res){
+
+					var html = '';
+
+					console.log(res);
+
+					 $('.pagination').empty();
+
+				  		var json = $.parseJSON(res);
+
+					$.each(json.data,function(i,v){
+
+						html +='<div class="card box-shadow" onclick="DeleteSong('+v.id+')" style="width: 100%"  width="100%"><button class="delete-btn "> Delete</button><div class="button-cover"><div class="button r toggle-btn" id="buttontoggle" data-field="btn-'+v.id+'"><input type="checkbox" class="checkbox"><div class="knobs"></div><div class="layer"></div></div>';
+
+
+
+						html += '<div class="drop" id="btn-'+v.id+'" style="display: none;"><h5 class="text-primary">Listen your song here</h5><div class="bg-img"><img src="img/dj-list2.png" class="img-responsive"></div>';					
+
+					html += '<hr><strong>ID no</strong><p> <i class="fa fa-id-badge text-primary"></i> '+v.id+'</p><hr><strong>ID DJ</strong><p> <i class="fa fa-id-badge text-primary"></i>  '+v.id_dj+'</p><hr><strong>Name</strong><p> <i class="fa fa-user text-primary"></i> '+v.name+'</p><hr>';
+
+					html += '<strong>Genere</strong><p> <i class="fa fa-star text-primary"></i> '+v.genere+'</p><hr><strong>URL</strong><p> <i class="fa fa-globe text-primary"></i> <a href="https://www.youtube.com/watch?v='+v.url+'">https://www.youtube.com/watch?v='+v.url+'</a></p><hr><strong>Artist</strong><p><i class="fa fa-user text-primary"></i> '+v.artist+'</p><hr></div></div></div></div>';
+
+					
+
+
+
+					});
+
+					
+
+					$('#SongList').html(html);	
+
+					 $('.pagination').pagination({
+
+			          itemsToPaginate:".box-shadow",
+
+			          activeClass:'active',
+
+			          itemsPerPage:3
+
+			      });
+
+
+
+				}
+
+			})
+
+
+
+		});
+
+
+
+		 $(document).on('click',"div[id^='buttontoggle']", function(){
+
+      var btn = $(this).data('field');
+
+      $('#'+btn).slideToggle();
+
+    });
+
+
+
+	});
+
+
+
+
+
+	function DeleteSong(id){
+
+
+
+	  var base_url = 'http://songblendr.com/web_service/api/';
+
+  		if(id == '') {
+
+  			alert('Dj Id cannot be empty');
+
+  			return false;
+
+  		}
+
+  		if (confirm('Are sure want to delete song ?')) {
+
+		    	
+
+		    $.ajax({
+
+			  	url:base_url+'song/delete.php',
+
+			  	type:'DELETE',
+
+			  	data:JSON.stringify({"id":id}),
+
+			  	 dataType: 'json',
+
+         		 cache: false,
+
+			  	success:function(res){
+
+		  			alert(res.message);
+
+		  				window.location.reload();
+
+	  			}
+
+	 	 });
+
+
+
+		} 
+
+
+
+	}
+
+
+
+</script>
+
+</body>
+
